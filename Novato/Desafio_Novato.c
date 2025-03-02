@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <time.h>
 
 //função responsavel por limpar o console. Ela possui um funcionamento levemente diferente a depender se ela foi compilada em windows ou não.
 void limpar_console() {
@@ -46,22 +47,37 @@ void imprimirArrayBiDimensional(int** array, int largura, int altura) {
     }
 }
 
+int DescobrirSePontoValido(int limitador_x, int limitador_y, int ponto_x, int ponto_y) {
+    if (limitador_x == ponto_x && limitador_y == ponto_y) {
+        return 0;
+    }
+    return 1;
+}
+
+int GerarNumeroAleatorio() {
+    int numeroAleatorio = rand() % 6;
+
+    return numeroAleatorio;
+}
+
 int main() {
     setlocale(LC_ALL, "Portuguese");
+    srand(time(NULL));
     int largura = 10, altura = 10;
     int** array = GerarArrayBiDimensional(largura, altura);
     int x, y;
 
     for (x = 0; x < largura; x++) {
         for (y = 0; y < altura; y++) {
-            if ((x == 7 && y == 3) || (x == 8 && y == 4) || (x == 9 && y == 5)) {
-                array[x][y] = 3;
-            }
-            if ((x == 4 && y == 6) || (x == 5 && y == 6) || (x == 6 && y == 6)) {
-                array[x][y] = 3;
-            }
-            if ((x == 2 && y == 4) || (x == 2 && y == 5) || (x == 2 && y == 6)) {
-                array[x][y] = 3;
+            int i;
+            for (i = 0; i < 3; i++) {
+                int numero_x = GerarNumeroAleatorio();
+                int numero_y = GerarNumeroAleatorio();
+
+                printf("\n o numero x é: %d \n", numero_x);
+                if ((DescobrirSePontoValido(numero_x, numero_y, x, y) == 0) || (DescobrirSePontoValido(numero_x + 1, numero_y, x, y) == 0) || (DescobrirSePontoValido(numero_x + 2, numero_y, x, y) == 0)) {
+                    array[x][y] = 3;
+                }
             }
         }
     }
@@ -74,4 +90,7 @@ int main() {
 
 
     free(array);
+
+    GerarNumeroAleatorio();
+  return 0;   
 }
