@@ -54,10 +54,60 @@ int DescobrirSePontoValido(int limitador_x, int limitador_y, int ponto_x, int po
     return 1;
 }
 
-int GerarNumeroAleatorio() {
-    int numeroAleatorio = rand() % 6;
+int GerarNumeroAleatorio(int limite) {
+    int numeroAleatorio = rand() % limite;
 
     return numeroAleatorio;
+}
+
+int VerificarOverlap(int** array, int largura, int altura, int numero_x, int numero_y, int direcao) {
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (direcao == 0 ) {
+            if (numero_x + i < largura && array[numero_x + i][numero_y] != 0) {
+                return 1;
+            }
+        } else if (direcao == 1) {
+            if (numero_y + i < altura && array[numero_x][numero_y + i] != 0) {
+                return 1;
+            }
+        } else if (direcao == 2) {
+            if (numero_x + i < largura && numero_y + i < altura && array[numero_x + i][numero_y + i] != 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void PreencherArray(int** array, int largura, int altura) {
+    int x, y, i, direcao = 0;
+
+    for (i = 0; i < 3; i++) {
+        int numero_x, numero_y;
+        int overlap;
+
+        do {
+            numero_x = GerarNumeroAleatorio(largura);
+            numero_y = GerarNumeroAleatorio(altura);
+            overlap = VerificarOverlap(array, largura, altura, numero_x, numero_y, direcao);
+        } while (overlap == 1);
+        
+        if (direcao == 0) {
+            array[numero_x][numero_y] = 3;
+            array[numero_x + 1][numero_y] = 3;
+            array[numero_x + 2][numero_y] = 3;
+        } else if (direcao == 1) {
+            array[numero_x][numero_y] = 3;
+            array[numero_x][numero_y + 1] = 3;
+            array[numero_x][numero_y + 2] = 3;
+        } else if (direcao == 2) {
+            array[numero_x][numero_y] = 3;
+            array[numero_x + 1][numero_y + 1] = 3;
+            array[numero_x + 2][numero_y + 2] = 3;
+        }
+        direcao++;
+    }
 }
 
 int main() {
@@ -65,22 +115,9 @@ int main() {
     srand(time(NULL));
     int largura = 10, altura = 10;
     int** array = GerarArrayBiDimensional(largura, altura);
-    int x, y;
-
-    for (x = 0; x < largura; x++) {
-        for (y = 0; y < altura; y++) {
-            int i;
-            for (i = 0; i < 3; i++) {
-                int numero_x = GerarNumeroAleatorio();
-                int numero_y = GerarNumeroAleatorio();
-
-                printf("\n o numero x é: %d \n", numero_x);
-                if ((DescobrirSePontoValido(numero_x, numero_y, x, y) == 0) || (DescobrirSePontoValido(numero_x + 1, numero_y, x, y) == 0) || (DescobrirSePontoValido(numero_x + 2, numero_y, x, y) == 0)) {
-                    array[x][y] = 3;
-                }
-            }
-        }
-    }
+    int x;
+    
+    PreencherArray(array, largura, altura);
     
     imprimirArrayBiDimensional(array, largura, altura);
     
@@ -91,6 +128,5 @@ int main() {
 
     free(array);
 
-    GerarNumeroAleatorio();
   return 0;   
 }
