@@ -56,6 +56,9 @@ int DescobrirSePontoValido(int limitador_x, int limitador_y, int ponto_x, int po
 
 int GerarNumeroAleatorio(int limite) {
     int numeroAleatorio = rand() % limite;
+    if (numeroAleatorio >= limite - 3) {
+        numeroAleatorio -= 3;
+    }
 
     return numeroAleatorio;
 }
@@ -80,10 +83,10 @@ int VerificarOverlap(int** array, int largura, int altura, int numero_x, int num
     return 0;
 }
 
-void PreencherArray(int** array, int largura, int altura) {
+void PreencherArray(int** array, int largura, int altura, int repeticao) {
     int x, y, i, direcao = 0;
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < repeticao; i++) {
         int numero_x, numero_y;
         int overlap;
 
@@ -101,12 +104,15 @@ void PreencherArray(int** array, int largura, int altura) {
             array[numero_x][numero_y] = 3;
             array[numero_x][numero_y + 1] = 3;
             array[numero_x][numero_y + 2] = 3;
-        } else if (direcao == 2) {
+        } else if (direcao == 2 || direcao == 3) {
             array[numero_x][numero_y] = 3;
             array[numero_x + 1][numero_y + 1] = 3;
             array[numero_x + 2][numero_y + 2] = 3;
         }
         direcao++;
+        if (direcao >= 4) {
+            direcao = 0;
+        }
     }
 }
 
@@ -117,7 +123,7 @@ int main() {
     int** array = GerarArrayBiDimensional(largura, altura);
     int x;
     
-    PreencherArray(array, largura, altura);
+    PreencherArray(array, largura, altura, 2);
     
     imprimirArrayBiDimensional(array, largura, altura);
     
